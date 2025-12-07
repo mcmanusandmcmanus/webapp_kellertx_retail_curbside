@@ -1,0 +1,5 @@
+<span id="cart-indicator" hx-get="{% url 'cart_indicator' %}" hx-trigger="revealed, every 10s" hx-target="#cart-indicator" hx-swap="outerHTML">
+    <a href="{% url 'cart_detail' %}" class="flex items-center gap-1 font-semibold text-emerald-700">
+        Cart <span>({{ cart_item_count }})</span>
+    </a>
+</span>

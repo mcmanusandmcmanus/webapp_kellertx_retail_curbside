@@ -1,0 +1,8 @@
+{% if order.arrival_alert %}
+<div class="rounded bg-emerald-50 border border-emerald-200 p-4">
+    <p class="text-emerald-800 font-semibold">Arrival received</p>
+    <p class="text-sm text-emerald-700">Vehicle: {{ order.arrival_alert.vehicle_desc }}{% if order.arrival_alert.parking_spot %} - Spot {{ order.arrival_alert.parking_spot }}{% endif %}</p>
+</div>
+{% else %}
+<p class="text-sm text-slate-500">Let us know when you're curbside.</p>
+{% endif %}

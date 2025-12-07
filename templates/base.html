@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" x-data="{mobileOpen: false}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Retail Curbside{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+    <header class="bg-white shadow">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="{% url 'catalog' %}" class="text-xl font-bold text-emerald-700">RetailCurbside</a>
+            <div class="hidden md:flex items-center gap-6">
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'orders' %}" class="text-sm font-medium text-slate-600 hover:text-emerald-700">My Orders</a>
+                    {% if request.user.is_staff_portal_user %}
+                        <a href="{% url 'staff_dashboard' %}" class="text-sm font-medium text-slate-600 hover:text-emerald-700">Staff Portal</a>
+                    {% endif %}
+                    <a href="{% url 'profile' %}" class="text-sm font-medium text-slate-600 hover:text-emerald-700">Profile</a>
+                    <form action="{% url 'account_logout' %}" method="post">
+                        {% csrf_token %}
+                        <button class="text-sm font-medium text-slate-600 hover:text-emerald-700" type="submit">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'account_login' %}" class="text-sm font-medium text-slate-600 hover:text-emerald-700">Login</a>
+                    <a href="{% url 'account_signup' %}" class="text-sm font-medium text-slate-600 hover:text-emerald-700">Sign Up</a>
+                {% endif %}
+                <span id="cart-indicator" hx-get="{% url 'cart_indicator' %}" hx-trigger="revealed" hx-target="#cart-indicator" hx-swap="outerHTML">
+                    <a href="{% url 'cart_detail' %}" class="flex items-center gap-1 font-semibold text-emerald-700">
+                        Cart <span>({{ cart_item_count }})</span>
+                    </a>
+                </span>
+            </div>
+        </div>
+    </header>
+    <main class="flex-1">
+        <div class="max-w-6xl mx-auto px-4 py-6">
+            {% include "partials/messages.html" %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    <footer class="bg-slate-900 text-white py-6 mt-10">
+        <div class="max-w-6xl mx-auto px-4 text-sm text-slate-300">
+            ÂCopyright {% now "Y" %} RetailCurbside. All rights reserved.
+        </div>
+    </footer>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

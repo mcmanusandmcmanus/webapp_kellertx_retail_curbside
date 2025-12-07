@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} | RetailCurbside{% endblock %}
+{% block content %}
+<div class="grid md:grid-cols-2 gap-8">
+    <div>
+        {% if product.image %}
+            <img src="{{ product.image }}" alt="{{ product.name }}" class="rounded shadow">
+        {% else %}
+            <div class="bg-slate-200 h-64 rounded"></div>
+        {% endif %}
+    </div>
+    <div>
+        <p class="text-sm text-slate-500">{{ product.category.name }}</p>
+        <h1 class="text-3xl font-bold mb-4">{{ product.name }}</h1>
+        <p class="text-lg mb-4 text-slate-700">{{ product.description }}</p>
+        <p class="text-2xl font-semibold text-emerald-700 mb-6">${{ product.price }}</p>
+        <form method="post" action="{% url 'cart_add' product.id %}" hx-post="{% url 'cart_add' product.id %}" hx-target="#cart-indicator" hx-swap="outerHTML">
+            {% csrf_token %}
+            <label class="block text-sm font-medium text-slate-600 mb-1">Quantity</label>
+            <input type="number" name="quantity" min="1" value="1" class="border rounded px-3 py-2 w-24 mb-4">
+            <button class="bg-emerald-600 text-white px-6 py-2 rounded" type="submit" {% if not product.in_stock %}disabled{% endif %}>Add to cart</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

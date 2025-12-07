@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Checkout | RetailCurbside{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Checkout</h1>
+<div class="grid md:grid-cols-3 gap-8">
+    <div class="md:col-span-2 bg-white rounded shadow p-6">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="bg-emerald-600 text-white px-5 py-2 rounded" type="submit">Submit Order</button>
+        </form>
+    </div>
+    <div class="bg-white rounded shadow p-6">
+        <h2 class="text-xl font-semibold mb-3">Order summary</h2>
+        <div class="space-y-2">
+            {% for item in cart_items %}
+                <div class="flex justify-between text-sm">
+                    <span>{{ item.product.name }} x {{ item.quantity }}</span>
+                    <span>${{ item.line_total }}</span>
+                </div>
+            {% endfor %}
+        </div>
+        <p class="mt-4 font-bold text-lg text-emerald-700">Total: ${{ cart_total }}</p>
+    </div>
+</div>
+{% endblock %}

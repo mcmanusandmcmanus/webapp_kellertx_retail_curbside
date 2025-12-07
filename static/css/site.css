@@ -1,0 +1,14 @@
+.border.success {
+    border-color: #22c55e;
+    color: #166534;
+}
+
+.border.error {
+    border-color: #f87171;
+    color: #991b1b;
+}
+
+.border.info {
+    border-color: #38bdf8;
+    color: #075985;
+}

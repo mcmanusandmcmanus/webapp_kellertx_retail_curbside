@@ -1,0 +1,57 @@
+<div class="bg-white rounded shadow overflow-hidden">
+    <table class="min-w-full text-left">
+        <thead class="bg-slate-100 text-xs uppercase">
+            <tr>
+                <th class="px-4 py-2">Order</th>
+                <th class="px-4 py-2">Customer</th>
+                <th class="px-4 py-2">Status</th>
+                <th class="px-4 py-2">Pickup</th>
+                <th class="px-4 py-2">Arrival</th>
+                <th class="px-4 py-2">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr class="{% if order.status == order.Status.CUSTOMER_ARRIVED %}bg-emerald-50{% endif %}">
+                <td class="px-4 py-2 font-semibold">{{ order.id }}</td>
+                <td class="px-4 py-2">
+                    <p>{{ order.user.get_full_name }}</p>
+                    <p class="text-xs text-slate-500">{{ order.user.phone_number }}</p>
+                </td>
+                <td class="px-4 py-2">{{ order.display_status }}</td>
+                <td class="px-4 py-2 text-sm">{{ order.pickup_slot.start_time|date:"g:i a" }} - {{ order.pickup_slot.end_time|date:"g:i a" }}</td>
+                <td class="px-4 py-2 text-sm">
+                    {% if order.arrival_alert %}
+                        {{ order.arrival_alert.vehicle_desc }}{% if order.arrival_alert.parking_spot %} - Spot {{ order.arrival_alert.parking_spot }}{% endif %}
+                    {% else %}
+                        <span class="text-slate-400">Waiting</span>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-2">
+                    {% if order.status == order.Status.COMPLETED %}
+                        <span class="text-slate-400 text-xs">Done</span>
+                    {% elif order.status == order.Status.PROCESSING %}
+                        <form method="post" action="{% url 'order_status_update' order.pk %}" hx-post="{% url 'order_status_update' order.pk %}" hx-target="#staff-order-stream" hx-swap="innerHTML">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="ready_for_pickup">
+                            <button class="px-3 py-1 text-xs rounded bg-emerald-600 text-white" type="submit">Mark Ready</button>
+                        </form>
+                    {% elif order.status in (order.Status.READY_FOR_PICKUP, order.Status.CUSTOMER_ARRIVED) %}
+                        <form method="post" action="{% url 'order_status_update' order.pk %}" hx-post="{% url 'order_status_update' order.pk %}" hx-target="#staff-order-stream" hx-swap="innerHTML">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="completed">
+                            <button class="px-3 py-1 text-xs rounded bg-emerald-600 text-white" type="submit">Complete</button>
+                        </form>
+                    {% else %}
+                        <span class="text-slate-400 text-xs">--</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="6" class="px-4 py-6 text-center text-slate-400">No active curbside orders.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

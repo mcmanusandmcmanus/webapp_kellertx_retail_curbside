@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}My Orders | RetailCurbside{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">My Orders</h1>
+<div class="space-y-4">
+    {% for order in orders %}
+        <a href="{% url 'order_detail' order.pk %}" class="block bg-white rounded shadow p-4 hover:border-emerald-500 border border-transparent">
+            <div class="flex justify-between">
+                <div>
+                    <p class="font-semibold">Order {{ order.id }}</p>
+                    <p class="text-sm text-slate-500">{{ order.created_at|date:"M d, g:i a" }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-semibold text-emerald-700">${{ order.total_amount }}</p>
+                    <p class="text-sm text-slate-500">{{ order.display_status }}</p>
+                </div>
+            </div>
+        </a>
+    {% empty %}
+        <p>You have no orders yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+databases:
+  - name: retail-curbside-db
+    plan: free
+
+services:
+  - type: redis
+    name: retail-curbside-redis
+    plan: free
+    ipAllowList: []
+
+  - type: web
+    name: retail-curbside-web
+    env: python
+    plan: starter
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+    startCommand: daphne -b 0.0.0.0 -p $PORT config.asgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.prod
+      - key: PYTHON_VERSION
+        value: 3.10
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: retail-curbside-web.onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: retail-curbside-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: retail-curbside-redis
+          property: connectionString

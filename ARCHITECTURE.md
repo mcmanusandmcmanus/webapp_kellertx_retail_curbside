@@ -27,3 +27,7 @@
 - Run `python manage.py createsuperuser` to seed staff/manager accounts.
 - Use admin to upload Categories/Products.
 - Pickup slots auto-provision on first checkout attempt (`apps.curbside.services.ensure_default_pickup_slots`). Adjust timing/capacity via env/command if needed.
+
+### Deployment Notes
+- `render.yaml` describes the Render stack (Daphne web service + Postgres + Redis). Deploy via Render Blueprints for one-click provisioning.
+- Production runs with `config.settings.prod`, Whitenoise for static assets, and `DATABASE_URL`/`REDIS_URL` env vars injected by the platform.
